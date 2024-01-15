@@ -1,4 +1,4 @@
-package com.example.campingontop.house.repository.QueryDsl;
+package com.example.campingontop.house.repository.queryDsl;
 
 import com.example.campingontop.house.model.House;
 import com.example.campingontop.house.model.QHouse;
