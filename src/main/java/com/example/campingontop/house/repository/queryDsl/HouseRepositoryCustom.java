@@ -13,6 +13,7 @@ public interface HouseRepositoryCustom {
 
     Page<House> findByPriceAsc(Pageable pageable);
     Page<House> findByName(Pageable pageable, String name);
+    Page<House> findByAddress(Pageable pageable, String address);
 
     // List<House> findHousesWithinDistance(Double latitude, Double longitude);
 
