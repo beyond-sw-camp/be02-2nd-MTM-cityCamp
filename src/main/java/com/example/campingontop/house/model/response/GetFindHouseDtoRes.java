@@ -47,4 +47,21 @@ public class GetFindHouseDtoRes {
                 .filenames(filenames)
                 .build();
     }
+
+    public static GetFindHouseDtoRes toDto(House house) {
+        return GetFindHouseDtoRes.builder()
+                .id(house.getId())
+                .name(house.getName())
+                .content(house.getContent())
+                .price(house.getPrice())
+                .address(house.getAddress())
+                .latitude(house.getLatitude())
+                .longitude(house.getLongitude())
+                .maxUser(house.getMaxUser())
+                .hasAirConditioner(house.getHasAirConditioner())
+                .hasWashingMachine(house.getHasWashingMachine())
+                .hasBed(house.getHasBed())
+                .hasHeater(house.getHasHeater())
+                .build();
+    }
 }

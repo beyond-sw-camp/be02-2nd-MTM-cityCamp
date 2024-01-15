@@ -93,8 +93,12 @@ public class HouseController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @PutMapping("/update/{houseId}")
-    public ResponseEntity updateHouse(@Valid @RequestBody PutUpdateHouseDtoReq putUpdateHouseDtoReq, @PathVariable Long houseId) {
-        PutUpdateHouseDtoRes house = houseService.updateHouse(putUpdateHouseDtoReq, houseId);
+    public ResponseEntity updateHouse(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody PutUpdateHouseDtoReq putUpdateHouseDtoReq,
+            @PathVariable Long houseId
+    ) {
+        PutUpdateHouseDtoRes house = houseService.updateHouse(user, putUpdateHouseDtoReq, houseId);
         return ResponseEntity.ok().body(house);
     }
 
@@ -105,7 +109,10 @@ public class HouseController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @GetMapping(value = "/like/{houseId}")
-    public ResponseEntity addHeartHouse(@AuthenticationPrincipal User user, @PathVariable Long houseId) {
+    public ResponseEntity addHeartHouse(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long houseId
+    ) {
         return ResponseEntity.ok().body(houseService.addHeartHouse(user, houseId));
     }
 
@@ -116,9 +123,12 @@ public class HouseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
-    @DeleteMapping("/delete/{houseId}")
-    public ResponseEntity deleteHouse(@Parameter(description = "삭제할 house의 id") @PathVariable Long houseId) {
-        houseService.deleteHouse(houseId);
+    @PutMapping("/delete/{houseId}")
+    public ResponseEntity deleteHouse(
+            @AuthenticationPrincipal User user,
+            @Parameter(description = "삭제할 house의 id") @PathVariable Long houseId
+    ) {
+        houseService.deleteHouse(user, houseId);
         return ResponseEntity.ok().body("House delete success");
     }
 }

@@ -122,7 +122,7 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
-    @DeleteMapping("/delete/{userId}")
+    @PutMapping("/delete/{userId}")
     public ResponseEntity deleteUser(@Valid @Parameter(description = "삭제할 user의 id") @PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok().body("User 회원 탈퇴 완료");
