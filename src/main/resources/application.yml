@@ -1,0 +1,74 @@
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  token:
+    expired-time-ms: ${JWT_TOKEN_EXPIRED_TIME}
+
+spring:
+  datasource:
+    master:
+      hikari:
+        username: ${MASTER_USERNAME}
+        password: ${MASTER_PASSWORD}
+        jdbc-url: ${MASTER_JDBC_URL}
+        driver-class-name: ${DB_DRIVER}
+    slave:
+      hikari:
+        username: ${SLAVE_USERNAME}
+        password: ${SLAVE_PASSWORD}
+        jdbc-url: ${SLAVE_JDBC_URL}
+        driver-class-name: ${DB_DRIVER}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_BUCKET_NAME}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION_NAME}
+      auto: false
+    stack:
+      auto: false
+
+message:
+  set:
+    from: ${MESSAGE_SET_FROM}
+    text: ${MESSAGE_SET_TEXT}
+    subject1: ${MESSAGE_SET_SUBJECT1}
+    subject2: ${MESSAGE_SET_SUBJECT2}
+    subject3: ${MESSAGE_SET_SUBJECT3}
