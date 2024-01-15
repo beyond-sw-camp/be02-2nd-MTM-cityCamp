@@ -128,7 +128,7 @@ public class HouseService {
         throw new HouseException(ErrorCode.HOUSE_NOT_EXIST);
     }
 
-    public PutUpdateHouseDtoRes updateHouse(PutUpdateHouseDtoReq req, Long houseId) {
+    public PutUpdateHouseDtoRes updateHouse(User user, PutUpdateHouseDtoReq req, Long houseId) {
         Optional<House> result = houseRepository.findById(houseId);
         if (result.isPresent()) {
             House house = result.get();
@@ -154,7 +154,7 @@ public class HouseService {
         throw new HouseException(ErrorCode.HOUSE_NOT_EXIST);
     }
 
-    public void deleteHouse(Long houseId) {
+    public void deleteHouse(User user, Long houseId) {
         Optional<House> result = houseRepository.findActiveHouse(houseId);
         if (result.isPresent()) {
             House house = result.get();
