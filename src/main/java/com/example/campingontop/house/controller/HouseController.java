@@ -50,6 +50,34 @@ public class HouseController {
             ) {
         return ResponseEntity.ok().body(houseService.createHouse(user, postCreateHouseDtoReq, uploadFiles));
     }
+    @Operation(summary = "House 가격 내림차순 조회",
+            description = "가격 내림차순으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/pricedesc")
+    public ResponseEntity findHouseByPriceDesc(GetHouseListPagingDtoReq req) {
+        return ResponseEntity.ok().body(houseService.findByPriceDesc(req));
+    }
+
+    @Operation(summary = "House 가격 오름차순 조회",
+            description = "가격 오름차순으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/priceasc")
+    public ResponseEntity findHouseByPriceAsc(GetHouseListPagingDtoReq req) {
+        return ResponseEntity.ok().body(houseService.findByPriceAsc(req));
+    }
+    @Operation(summary = "House 이름으로 조회",
+            description = "숙소 이름으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/name")
+    public ResponseEntity findHouseByName(GetHouseListPagingDtoReq req,String name) {
+        return ResponseEntity.ok().body(houseService.findByName(req, name));
+    }
 
 
     @Operation(summary = "House 숙소 조회",

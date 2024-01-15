@@ -34,6 +34,55 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final HouseImageService houseImageService;
 
+    public List<GetFindHouseDtoRes> findByPriceDesc(GetHouseListPagingDtoReq req){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByPriceDesc(pageable);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+    public List<GetFindHouseDtoRes> findByPriceAsc(GetHouseListPagingDtoReq req){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByPriceAsc(pageable);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+    public List<GetFindHouseDtoRes> findByName(GetHouseListPagingDtoReq req, String name){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByName(pageable, name);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+
     public PostCreateHouseDtoRes createHouse(User user, PostCreateHouseDtoReq request, MultipartFile[] uploadFiles) {
         Optional<House> result = houseRepository.findByName(request.getName());
         if (result.isPresent()) {
