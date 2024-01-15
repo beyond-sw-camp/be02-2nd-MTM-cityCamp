@@ -1,8 +1,10 @@
 package com.example.campingontop.likes.controller;
 
+import com.example.campingontop.likes.model.Likes;
 import com.example.campingontop.likes.model.dto.request.PostCreateLikesDtoReq;
+import com.example.campingontop.likes.model.dto.response.GetLikesDtoRes;
 import com.example.campingontop.likes.service.LikesService;
-import com.example.campingontop.user.model.response.GetUserWithLikeDtoRes;
+import com.example.campingontop.user.model.response.GetUserWithLikesDtoRes;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,35 +18,45 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Tag(name="Like", description = "Like 숙소 좋아요 CRUD")
-@Api(tags = "Like")
+@Tag(name="Likes", description = "Like 숙소 좋아요 CRUD")
+@Api(tags = "Likes")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 @CrossOrigin("*")
-@RequestMapping("/api/v1/like")
+@RequestMapping("/api/v1/likes")
 public class LikesController {
     private final LikesService likesService;
 
-    @Operation(summary = "Like 숙소 좋아요 생성",
+    @Operation(summary = "Likes 숙소 좋아요 생성",
             description = "숙소 좋아요 목록을 생성하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @PostMapping("/create")
-    public ResponseEntity<String> createLikes(@Valid @RequestBody PostCreateLikesDtoReq request) {
-        likesService.createLike(request);
-        return ResponseEntity.ok().body("house like create success");
+    public ResponseEntity createLikes(@Valid @RequestBody PostCreateLikesDtoReq request) {
+        return ResponseEntity.ok().body(likesService.createLikes(request));
     }
 
-    @Operation(summary = "Like 숙소 좋아요 + 유저 정보 조회",
-            description = "유저 ID로 유저, 유저가 좋아요한 숙소 목록을 조회하는 API입니다.")
+    @Operation(summary = "Likes 조회",
+            description = "유저 ID로 유저가 좋아요한 숙소 목록을 조회하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<GetUserWithLikeDtoRes>> findLikeByUserId(@Valid @PathVariable Long userId) {
-        List<GetUserWithLikeDtoRes> likedHouses = likesService.findLikeByUserId(userId);
-        return ResponseEntity.ok().body(likedHouses);
+    @GetMapping("/user/{userId}")
+    public GetLikesDtoRes getLikesByUserId(@PathVariable Long userId) {
+        return likesService.findLikesByUserId(userId);
     }
+
+    @Operation(summary = "Likes 좋아요 삭제",
+            description = "유저 ID로 유저가 좋아요한 숙소 목록을 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @PutMapping("/delete/{likesId}")
+    public ResponseEntity deleteLikes(@PathVariable Long likesId) {
+        likesService.deleteLikes(likesId);
+        return ResponseEntity.ok().body("likes delete success");
+    }
+
 }
