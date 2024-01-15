@@ -76,20 +76,23 @@ public class HouseController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @GetMapping("/find/name")
-    public ResponseEntity findHouseByName(GetHouseListPagingDtoReq req,String name) {
+    public ResponseEntity findHouseByName(GetHouseListPagingDtoReq req, String name) {
         return ResponseEntity.ok().body(houseService.findByName(req, name));
     }
-
+  
     @Operation(summary = "House 주소로 조회",
             description = "숙소 주소로 숙소를 조회하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @GetMapping("/find/address")
-    public ResponseEntity findByAddress(GetHouseListPagingDtoReq req, String address) {
+
+    public ResponseEntity findHouseByaddress(GetHouseListPagingDtoReq req, String address) {
         return ResponseEntity.ok().body(houseService.findByAddress(req, address));
     }
-
+ 
+  
+  
     @Operation(summary = "House 거리순으로 조회",
             description = "사용자에서 가까운 위치 순으로 숙소를 조회하는 API입니다.")
     @ApiResponses({

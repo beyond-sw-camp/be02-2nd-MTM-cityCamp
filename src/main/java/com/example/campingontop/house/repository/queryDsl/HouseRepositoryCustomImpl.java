@@ -149,7 +149,7 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     }
 
     @Override
-    public Page<House> findByAddress(Pageable pageable, String address){
+    public Page<House> findByAddress(Pageable pageable, String address) {
         QHouse house = QHouse.house;
 
         List<House> houses = from(house)

@@ -116,6 +116,23 @@ public class HouseService {
     }
 
 
+    public List<GetFindHouseDtoRes> findByAddress(GetHouseListPagingDtoReq req, String address){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByAddress(pageable, address);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+
     public PostCreateHouseDtoRes createHouse(User user, PostCreateHouseDtoReq request, MultipartFile[] uploadFiles) {
         Optional<House> result = houseRepository.findByName(request.getName());
         if (result.isPresent()) {
