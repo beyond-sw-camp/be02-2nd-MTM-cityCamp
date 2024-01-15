@@ -1,10 +1,9 @@
-package com.example.campingontop.house.repository.QueryDsl;
+package com.example.campingontop.house.repository.queryDsl;
 
 import com.example.campingontop.house.model.House;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface HouseRepositoryCustom {
@@ -12,5 +11,6 @@ public interface HouseRepositoryCustom {
     Optional<House> findActiveHouse(Long id);
 
     // List<House> findHousesWithinDistance(Double latitude, Double longitude);
+
 
 }

@@ -26,4 +26,6 @@ public class Likes {
     @ManyToOne
     @JoinColumn(name = "House_id")
     private House house;
+
+    private Boolean status;
 }
