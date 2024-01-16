@@ -1,52 +1,83 @@
 package com.example.campingontop.cart.service;
 
 import com.example.campingontop.cart.model.Cart;
+import com.example.campingontop.cart.model.dto.response.PostCreateCartDtoRes;
 import com.example.campingontop.cart.repository.CartRepository;
-import com.example.campingontop.cartHouse.model.CartHouse;
-import com.example.campingontop.cartHouse.repository.CartHouseRepository;
+
 import com.example.campingontop.exception.ErrorCode;
-import com.example.campingontop.exception.entityException.HouseException;
+import com.example.campingontop.exception.entityException.CartException;
 import com.example.campingontop.house.model.House;
 import com.example.campingontop.house.repository.HouseRepository;
+import com.example.campingontop.houseImage.model.HouseImage;
 import com.example.campingontop.user.model.User;
-import com.example.campingontop.user.repository.queryDsl.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CartService {
     private final CartRepository cartRepository;
-    private final UserRepository userRepository;
     private final HouseRepository houseRepository;
-    private final CartHouseRepository cartHouseRepository;
 
-    public void createCart(User user, Long houseId) {
-        Cart cart = cartRepository.findByUserId(user.getId());
-        if (cart == null) {
-            cart = Cart.createCart(user);
-            cartRepository.save(cart);
+    @Transactional
+    public PostCreateCartDtoRes addToCart(User user, Long houseId, LocalDate checkIn, LocalDate checkOut) {
+        House house = houseRepository.findById(houseId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 숙소가 존재하지 않습니다: " + houseId));
+
+        if (isHouseAlreadyInCart(user.getId(), houseId, checkIn, checkOut)) {
+            throw new CartException(ErrorCode.DUPLICATED_RESERVATION);
         }
 
-        Optional<House> result = houseRepository.findById(houseId);
-        if (result.isEmpty()) {
-            throw new HouseException(ErrorCode.HOUSE_NOT_EXIST);
+        int nights = (int) ChronoUnit.DAYS.between(checkIn, checkOut);
+        int totalPrice = house.getPrice() * nights;
+
+        Date fromDate = Date.from(checkIn.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date toDate = Date.from(checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Cart cart = Cart.builder()
+                .user(user)
+                .house(house)
+                .checkIn(fromDate)
+                .checkOut(toDate)
+                .price(totalPrice)
+                .build();
+
+        cart = cartRepository.save(cart);
+
+        List<HouseImage> houseImageList = house.getHouseImageList();
+
+        List<String> filenames = new ArrayList<>();
+        for (HouseImage productImage : houseImageList) {
+            String filename = productImage.getFilename();
+            filenames.add(filename);
         }
 
-        House house = result.get();
-        CartHouse cartHouse = cartHouseRepository.findByCartIdAndHouseId(cart.getId(), houseId);
+        PostCreateCartDtoRes res = PostCreateCartDtoRes.toDto(cart, filenames);
 
-        if (cartHouse == null) {
-            cartHouse = CartHouse.createCartHouse(cart, house);
-            cartHouse = cartHouseRepository.save(cartHouse);
-
-        }
+        return res;
     }
 
+    private boolean isHouseAlreadyInCart(Long userId, Long houseId, LocalDate checkIn, LocalDate checkOut) {
+        Date fromDate = Date.from(checkIn.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date toDate = Date.from(checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Optional<Cart> existingCart = cartRepository.findByUser_IdAndHouse_IdAndCheckInLessThanEqualAndCheckOutGreaterThanEqual(
+                userId, houseId, toDate, fromDate);
+
+        return existingCart.isPresent();
+    }
 
 }

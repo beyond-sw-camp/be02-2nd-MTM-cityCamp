@@ -1,6 +1,5 @@
 package com.example.campingontop.cart.model;
 
-import com.example.campingontop.cartHouse.model.CartHouse;
 import com.example.campingontop.house.model.House;
 import com.example.campingontop.user.model.User;
 import lombok.*;
@@ -9,9 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
@@ -29,8 +26,9 @@ public class Cart {
     @JoinColumn(name = "User_id")
     private User user;
 
-    @OneToMany(mappedBy = "cart")
-    private List<CartHouse> cartHouses = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "House_id")
+    private House house;
 
 
     private Date checkIn;
@@ -41,7 +39,9 @@ public class Cart {
 
     private Date updatedAt;
 
-    private Integer amount;
+    private Integer price;
+
+    private Boolean status;
 
 
     @PrePersist
@@ -53,11 +53,5 @@ public class Cart {
     @PreUpdate
     void updatedAt() {
         this.updatedAt = Timestamp.from(Instant.now());
-    }
-
-    public static Cart createCart(User user) {
-        Cart cart = new Cart();
-        cart.setUser(user);
-        return cart;
     }
 }

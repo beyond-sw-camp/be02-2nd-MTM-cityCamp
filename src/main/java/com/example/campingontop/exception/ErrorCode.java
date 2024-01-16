@@ -25,7 +25,7 @@ public enum ErrorCode {
 
 
     // Cart 관련 에러 코드
-
+    DUPLICATED_RESERVATION(HttpStatus.CONFLICT, "이미 예약 완료된 숙소입니다."),
 
 
     // Like 관련 에러 코드
