@@ -26,6 +26,8 @@ public enum ErrorCode {
 
     // Cart 관련 에러 코드
     DUPLICATED_RESERVATION(HttpStatus.CONFLICT, "이미 예약 완료된 숙소입니다."),
+    CART_EMPTY(HttpStatus.NOT_FOUND, "장바구니가 비어있습니다"),
+    CART_NOT_EXIST(HttpStatus.NOT_FOUND, "해당 숙소는 장바구니에 존재하지 않습니다."),
 
 
     // Like 관련 에러 코드
