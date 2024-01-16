@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,6 +50,57 @@ public class HouseController {
             @RequestPart MultipartFile[] uploadFiles
             ) {
         return ResponseEntity.ok().body(houseService.createHouse(user, postCreateHouseDtoReq, uploadFiles));
+    }
+    @Operation(summary = "House 가격 내림차순 조회",
+            description = "가격 내림차순으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/pricedesc")
+    public ResponseEntity findHouseByPriceDesc(GetHouseListPagingDtoReq req) {
+        return ResponseEntity.ok().body(houseService.findByPriceDesc(req));
+    }
+
+    @Operation(summary = "House 가격 오름차순 조회",
+            description = "가격 오름차순으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/priceasc")
+    public ResponseEntity findHouseByPriceAsc(GetHouseListPagingDtoReq req) {
+        return ResponseEntity.ok().body(houseService.findByPriceAsc(req));
+    }
+    @Operation(summary = "House 이름으로 조회",
+            description = "숙소 이름으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/name")
+    public ResponseEntity findHouseByName(GetHouseListPagingDtoReq req, String name) {
+        return ResponseEntity.ok().body(houseService.findByName(req, name));
+    }
+  
+    @Operation(summary = "House 주소로 조회",
+            description = "숙소 주소로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/address")
+
+    public ResponseEntity findHouseByaddress(GetHouseListPagingDtoReq req, String address) {
+        return ResponseEntity.ok().body(houseService.findByAddress(req, address));
+    }
+ 
+  
+  
+    @Operation(summary = "House 거리순으로 조회",
+            description = "사용자에서 가까운 위치 순으로 숙소를 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
+    @GetMapping("/find/location")
+    public ResponseEntity getNearestHouseList(GetHouseListPagingDtoReq req, Double latitude, Double longitude) {
+        return ResponseEntity.ok().body(houseService.getNearestHouseList(req, latitude,longitude));
     }
 
 
@@ -93,8 +145,12 @@ public class HouseController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @PutMapping("/update/{houseId}")
-    public ResponseEntity updateHouse(@Valid @RequestBody PutUpdateHouseDtoReq putUpdateHouseDtoReq, @PathVariable Long houseId) {
-        PutUpdateHouseDtoRes house = houseService.updateHouse(putUpdateHouseDtoReq, houseId);
+    public ResponseEntity updateHouse(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody PutUpdateHouseDtoReq putUpdateHouseDtoReq,
+            @PathVariable Long houseId
+    ) {
+        PutUpdateHouseDtoRes house = houseService.updateHouse(user, putUpdateHouseDtoReq, houseId);
         return ResponseEntity.ok().body(house);
     }
 
@@ -105,7 +161,10 @@ public class HouseController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @GetMapping(value = "/like/{houseId}")
-    public ResponseEntity addHeartHouse(@AuthenticationPrincipal User user, @PathVariable Long houseId) {
+    public ResponseEntity addHeartHouse(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long houseId
+    ) {
         return ResponseEntity.ok().body(houseService.addHeartHouse(user, houseId));
     }
 
@@ -116,9 +175,12 @@ public class HouseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
-    @DeleteMapping("/delete/{houseId}")
-    public ResponseEntity deleteHouse(@Parameter(description = "삭제할 house의 id") @PathVariable Long houseId) {
-        houseService.deleteHouse(houseId);
+    @PutMapping("/delete/{houseId}")
+    public ResponseEntity deleteHouse(
+            @AuthenticationPrincipal User user,
+            @Parameter(description = "삭제할 house의 id") @PathVariable Long houseId
+    ) {
+        houseService.deleteHouse(user, houseId);
         return ResponseEntity.ok().body("House delete success");
     }
 }

@@ -34,6 +34,91 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final HouseImageService houseImageService;
 
+    public List<GetFindHouseDtoRes> findByPriceDesc(GetHouseListPagingDtoReq req){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByPriceDesc(pageable);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+    public List<GetFindHouseDtoRes> findByPriceAsc(GetHouseListPagingDtoReq req){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByPriceAsc(pageable);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+    public List<GetFindHouseDtoRes> findByName(GetHouseListPagingDtoReq req, String name){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByName(pageable, name);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+
+
+    public List<GetFindHouseDtoRes> getNearestHouseList(GetHouseListPagingDtoReq req, Double latitude, Double longitude){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.getNearestHouseList(pageable, latitude, longitude);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+
+
+    public List<GetFindHouseDtoRes> findByAddress(GetHouseListPagingDtoReq req, String address){
+        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
+        Page<House> result = houseRepository.findByAddress(pageable, address);
+        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
+        for (House house : result) {
+            List<HouseImage> houseImageList = house.getHouseImageList();
+            List<String> filenames = new ArrayList<>();
+            for (HouseImage productImage : houseImageList) {
+                String filename = productImage.getFilename();
+                filenames.add(filename);
+            }
+            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
+            houseList.add(res);
+        }
+        return houseList;
+    }
+
     public PostCreateHouseDtoRes createHouse(User user, PostCreateHouseDtoReq request, MultipartFile[] uploadFiles) {
         Optional<House> result = houseRepository.findByName(request.getName());
         if (result.isPresent()) {
@@ -128,7 +213,7 @@ public class HouseService {
         throw new HouseException(ErrorCode.HOUSE_NOT_EXIST);
     }
 
-    public PutUpdateHouseDtoRes updateHouse(PutUpdateHouseDtoReq req, Long houseId) {
+    public PutUpdateHouseDtoRes updateHouse(User user, PutUpdateHouseDtoReq req, Long houseId) {
         Optional<House> result = houseRepository.findById(houseId);
         if (result.isPresent()) {
             House house = result.get();
@@ -154,7 +239,7 @@ public class HouseService {
         throw new HouseException(ErrorCode.HOUSE_NOT_EXIST);
     }
 
-    public void deleteHouse(Long houseId) {
+    public void deleteHouse(User user, Long houseId) {
         Optional<House> result = houseRepository.findActiveHouse(houseId);
         if (result.isPresent()) {
             House house = result.get();

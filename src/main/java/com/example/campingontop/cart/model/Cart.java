@@ -31,7 +31,6 @@ public class Cart {
     private House house;
 
 
-
     private Date checkIn;
     private Date checkOut;
 
@@ -40,7 +39,9 @@ public class Cart {
 
     private Date updatedAt;
 
-    private Integer amount;
+    private Integer price;
+
+    private Boolean status;
 
 
     @PrePersist

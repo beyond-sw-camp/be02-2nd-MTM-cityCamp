@@ -21,14 +21,20 @@ public enum ErrorCode {
     DUPLICATED_HOUSE(HttpStatus.CONFLICT, "중복된 숙소 이름이 존재합니다."),
     HOUSE_NOT_EXIST(HttpStatus.NOT_FOUND, "존재하지 않는 숙소입니다."),
     IMAGE_EMPTY(HttpStatus.UNAUTHORIZED, "사진을 첨부해주세요."),
-    DUPLICATED_HOUSE_NAME(HttpStatus.CONFLICT, "중복된 숙소 이름이 존재합니다.")
+    DUPLICATED_HOUSE_NAME(HttpStatus.CONFLICT, "중복된 숙소 이름이 존재합니다."),
 
 
     // Cart 관련 에러 코드
-
+    DUPLICATED_RESERVATION(HttpStatus.CONFLICT, "이미 예약 완료된 숙소입니다."),
+    CART_EMPTY(HttpStatus.NOT_FOUND, "장바구니가 비어있습니다"),
+    CART_NOT_EXIST(HttpStatus.NOT_FOUND, "해당 숙소는 장바구니에 존재하지 않습니다."),
 
 
     // Like 관련 에러 코드
+    DUPLICATED_LIKES(HttpStatus.CONFLICT, "이미 좋아요 목록에 존재하는 숙소입니다."),
+    LIKES_NOT_EXIST(HttpStatus.NOT_FOUND, "좋아요 목록에 추가한 숙소가 없습니다."),
+
+
     ;
 
     public HttpStatus getStatus() {
