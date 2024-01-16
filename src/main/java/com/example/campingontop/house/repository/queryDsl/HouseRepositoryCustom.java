@@ -15,11 +15,12 @@ public interface HouseRepositoryCustom {
     Page<House> findByPriceAsc(Pageable pageable);
     Page<House> findByName(Pageable pageable, String name);
 
+    List<House> getAroundHouseList(double maxY, double maxX, double minY, double minX);
 
-    Page<House> getNearestHouseList(Pageable pageable, Double latitude, Double longitude);
+
+//    Page<House> getNearestHouseList(Pageable pageable, Double latitude, Double longitude);
 
     Page<House> findByAddress(Pageable pageable, String address);
-
     // List<House> findHousesWithinDistance(Double latitude, Double longitude);
 
 

@@ -2,6 +2,7 @@ package com.example.campingontop.house.controller;
 
 import com.example.campingontop.house.model.House;
 import com.example.campingontop.house.model.request.GetHouseListPagingDtoReq;
+import com.example.campingontop.house.model.request.GetUserLocationDtoReq;
 import com.example.campingontop.house.model.request.PostCreateHouseDtoReq;
 import com.example.campingontop.house.model.request.PutUpdateHouseDtoReq;
 import com.example.campingontop.house.model.response.GetFindHouseDtoRes;
@@ -87,7 +88,7 @@ public class HouseController {
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @GetMapping("/find/address")
 
-    public ResponseEntity findHouseByaddress(GetHouseListPagingDtoReq req, String address) {
+    public ResponseEntity findHouseByAddress(GetHouseListPagingDtoReq req, String address) {
         return ResponseEntity.ok().body(houseService.findByAddress(req, address));
     }
  
@@ -99,10 +100,9 @@ public class HouseController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
     @GetMapping("/find/location")
-    public ResponseEntity getNearestHouseList(GetHouseListPagingDtoReq req, Double latitude, Double longitude) {
-        return ResponseEntity.ok().body(houseService.getNearestHouseList(req, latitude,longitude));
+    public ResponseEntity getAroundHouseList(@Valid @RequestBody GetUserLocationDtoReq input) {
+        return ResponseEntity.ok().body(houseService.findaroundHouseList(input));
     }
-
 
     @Operation(summary = "House 숙소 조회",
             description = "숙소 ID로 숙소 1개를 조회하는 API입니다.")
@@ -125,19 +125,6 @@ public class HouseController {
         List<GetFindHouseDtoRes> houseList = houseService.findHouseList(req);
         return ResponseEntity.ok().body(houseList);
     }
-
-
-    /*
-    public ResponseEntity getHousesWithinDistance(
-            @RequestParam("latitude") Double latitude,
-            @RequestParam("longitude") Double longitude
-    ) {
-        List<House> houses = houseService.findHousesWithinDistance(latitude, longitude);
-        return ResponseEntity.ok(houses);
-    }
-    */
-
-
 
     @Operation(summary = "House 숙소 정보 수정",
             description = "숙소의 정보를 수정하는 API입니다.")

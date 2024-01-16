@@ -2,14 +2,13 @@ package com.example.campingontop.house.repository.queryDsl;
 
 import com.example.campingontop.house.model.House;
 import com.example.campingontop.house.model.QHouse;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +25,19 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     }
 
     private JPAQueryFactory jpaQueryFactory;
+    @Override
+    public List<House> getAroundHouseList(double maxY, double maxX, double minY, double minX){
+        //X= Longtitude, Y= Latitude
+        QHouse house = new QHouse("house");
+
+        List<House> result = from(house)
+                .leftJoin(house.houseImageList).fetchJoin()
+                .leftJoin(house.user).fetchJoin()
+                .where(house.latitude.between(minY,maxY).and(house.longitude.between(minX,maxX)))
+                .fetch();
+
+        return result;
+    }
 
     @Override
     public Page<House> findList(Pageable pageable) {
@@ -82,58 +94,6 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         return new PageImpl<>(houses, pageable, pageable.getPageSize());
     }
 
-//    SELECT *
-//    FROM subway
-//    ORDER BY (6371
-//                      *ACOS(COS(RADIANS('입력받은 latitude'))
-//            *COS(RADIANS(subway.latitude))
-//            *COS(radians(subway.longitude)-RADIANS('입력받은 longitude'))
-//            +SIN(RADIANS('입력받은 latitude'))*SIN(RADIANS(latitude))))
-//    LIMIT 3
-
-    @Override
-    public Page<House> getNearestHouseList(Pageable pageable, Double latitude, Double longitude) {
-
-        // latitude 를 radians 로 계산
-        NumberExpression<Double> radiansLatitude =
-                Expressions.numberTemplate(Double.class, "radians({0})", latitude);
-
-        // 계산된 latitude -> 코사인 계산
-        NumberExpression<Double> cosLatitude =
-                Expressions.numberTemplate(Double.class, "cos({0})", radiansLatitude);
-        NumberExpression<Double> cosSubwayLatitude =
-                Expressions.numberTemplate(Double.class, "cos(radians({0}))", house.latitude);
-
-        // 계산된 latitude -> 사인 계산
-        NumberExpression<Double> sinLatitude =
-                Expressions.numberTemplate(Double.class, "sin({0})", radiansLatitude);
-        NumberExpression<Double> sinSubWayLatitude =
-                Expressions.numberTemplate(Double.class, "sin(radians({0}))", house.latitude);
-
-        // 사이 거리 계산
-        NumberExpression<Double> cosLongitude =
-                Expressions.numberTemplate(Double.class, "cos(radians({0}) - radians({1}))", house.longitude, longitude);
-
-        NumberExpression<Double> acosExpression =
-                Expressions.numberTemplate(Double.class, "acos({0})", cosLatitude.multiply(cosSubwayLatitude).multiply(cosLongitude).add(sinLatitude.multiply(sinSubWayLatitude)));
-
-        // 최종 계산
-        NumberExpression<Double> distanceExpression =
-                Expressions.numberTemplate(Double.class, "6371 * {0}", acosExpression);
-
-        List<House> findByNearestHouseList = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .orderBy(distanceExpression.asc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch().stream().collect(Collectors.toList());
-
-
-        return new PageImpl<>(findByNearestHouseList.stream()
-                .distinct()
-                .collect(Collectors.toList()), pageable, pageable.getPageSize());
-    }
     @Override
     public Page<House> findByName(Pageable pageable, String name){
         QHouse house = QHouse.house;
@@ -162,41 +122,4 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         return new PageImpl<>(houses, pageable, pageable.getPageSize());
     }
 
-    /*
-    @Override
-    public List<House> findHousesWithinDistance(Double baseLat, Double baseLon) {
-        QHouse house = QHouse.house;
-
-        NumberTemplate<Double> distanceExpression = DistanceUtils.calculateDistance(
-                house.latitude,
-                house.longitude,
-                Expressions.constant(baseLat),
-                Expressions.constant(baseLon)
-        );
-
-        List<House> houses = from(house)
-                .where(house.status.eq(true).and(distanceExpression.loe(1.0))) // 고정된 반경 1km
-                .select(house)
-                .fetch();
-
-        houses.sort(Comparator.comparingDouble(h ->
-                DistanceUtils.calculateDistance(baseLat, baseLon, h.getLatitude(), h.getLongitude())));
-
-        return houses;
-    }
-
-
-    private double calculateDistance(Double lat1, Double lon1, Double lat2, Double lon2) {
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return DistanceUtils.EARTH_RADIUS * c;
-    }
-    */
 }
