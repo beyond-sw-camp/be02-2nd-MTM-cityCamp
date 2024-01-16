@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <script>
+        var IMP = window.IMP;
+        IMP.init("imp32123581"); // 실제 키로 변경
+
+        function requestPay() {
+            var userId = 1; // 예시로 사용자 ID를 1로 가정
+
+            // 서버에 사용자 ID로 카트 조회 요청
+            $.ajax({
+                type: "GET",
+                url: "/api/v1/cart/user/" + userId,
+                success: function (cart) {
+                    if (cart != null) {
+                        // 카트에서 가격을 가져와 결제 진행
+                        var amount = cart.amount;
+                        var name = cart.name;
+
+                        IMP.request_pay({
+                            pg: 'kakaopay.TC0ONETIME',
+                            pay_method: 'card',
+                            merchant_uid: "IMP" + new Date().getTime(),
+                            name: '결제 상품',
+                            amount: amount,
+                            buyer_email: 'buyer@example.com',
+                            buyer_name: '구매자',
+                            buyer_tel: '010-1234-5678',
+                            buyer_addr: '서울특별시 강남구 삼성동',
+                            buyer_postcode: '123-456',
+                            display: {
+                                card_quota: [3]
+                            }
+                        }, function (rsp) { // callback
+                            if (rsp.success) {
+                                // 결제 성공 시 서버에 결제 정보 저장 요청
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/api/v1/payment",
+                                    data: {
+                                        userId: userId,
+                                        amount: amount,
+                                        merchantUid: rsp.merchant_uid,
+                                        impUid: rsp.imp_uid,
+                                        paymentStatus: rsp.status
+                                    },
+                                    success: function (response) {
+                                        console.log(response);
+                                    },
+                                    error: function (error) {
+                                        console.error("Error saving payment information:", error);
+                                    }
+                                });
+                            } else {
+                                console.log(rsp);
+                            }
+                        });
+                    } else {
+                        console.log("Cart not found for user ID: " + userId);
+                    }
+                },
+                error: function (error) {
+                    console.error("Error retrieving cart information:", error);
+                }
+            });
+        }
+    </script>
+    <meta charset="UTF-8">
+    <title>Sample Payment</title>
+</head>
+<body>
+<button onclick="requestPay()">결제하기</button>
+</body>
+</html>

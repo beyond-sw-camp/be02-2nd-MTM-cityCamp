@@ -9,9 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 
 @Tag(name="Cart", description = "Cart 숙소 장바구니 CRUD")
@@ -24,16 +27,21 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     private final CartService cartService;
 
-    @Operation(summary = "Cart 숙소 장바구니 등록",
-            description = "숙소 장바구니에 생성하는 API입니다.")
+    @Operation(summary = "Cart 장바구니 추가",
+            description = "Cart에 숙소를 추가하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "500",description = "서버 내부 오류")})
-    @PostMapping("/create/{houseId}")
-    public ResponseEntity<String> createCart(@AuthenticationPrincipal User user, @PathVariable Long houseId) {
-        cartService.createCart(user, houseId);
-
-        return ResponseEntity.ok().body("house cart create success");
+            @ApiResponse(responseCode = "404", description = "해당 House가 존재하지 않음"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    @PostMapping("/add")
+    public ResponseEntity addToCart(
+            @AuthenticationPrincipal User user,
+            @RequestParam Long houseId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut
+    ) {
+        return ResponseEntity.ok().body(cartService.addToCart(user, houseId, checkIn, checkOut));
     }
 
 
