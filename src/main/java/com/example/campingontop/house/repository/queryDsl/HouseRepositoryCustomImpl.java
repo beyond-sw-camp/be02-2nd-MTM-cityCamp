@@ -18,7 +18,6 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     public HouseRepositoryCustomImpl() {
         super(House.class);
     }
-    QHouse house;
 
     public HouseRepositoryCustomImpl(Class<?> domainClass, JPAQueryFactory jpaQueryFactory) {
         super(domainClass);
@@ -56,12 +55,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByPriceDesc(Pageable pageable){
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .orderBy(house.price.desc())
+        List<House> houses = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .orderBy(qHouse.price.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
@@ -70,12 +69,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByPriceAsc(Pageable pageable){
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses =from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .orderBy(house.price.asc())
+        List<House> houses =from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .orderBy(qHouse.price.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
@@ -93,6 +92,7 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> getNearestHouseList(Pageable pageable, Double latitude, Double longitude) {
+        QHouse qHouse = new QHouse("house");
 
         // latitude 를 radians 로 계산
         NumberExpression<Double> radiansLatitude =
@@ -102,17 +102,17 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         NumberExpression<Double> cosLatitude =
                 Expressions.numberTemplate(Double.class, "cos({0})", radiansLatitude);
         NumberExpression<Double> cosSubwayLatitude =
-                Expressions.numberTemplate(Double.class, "cos(radians({0}))", house.latitude);
+                Expressions.numberTemplate(Double.class, "cos(radians({0}))", qHouse.latitude);
 
         // 계산된 latitude -> 사인 계산
         NumberExpression<Double> sinLatitude =
                 Expressions.numberTemplate(Double.class, "sin({0})", radiansLatitude);
         NumberExpression<Double> sinSubWayLatitude =
-                Expressions.numberTemplate(Double.class, "sin(radians({0}))", house.latitude);
+                Expressions.numberTemplate(Double.class, "sin(radians({0}))", qHouse.latitude);
 
         // 사이 거리 계산
         NumberExpression<Double> cosLongitude =
-                Expressions.numberTemplate(Double.class, "cos(radians({0}) - radians({1}))", house.longitude, longitude);
+                Expressions.numberTemplate(Double.class, "cos(radians({0}) - radians({1}))", qHouse.longitude, longitude);
 
         NumberExpression<Double> acosExpression =
                 Expressions.numberTemplate(Double.class, "acos({0})", cosLatitude.multiply(cosSubwayLatitude).multiply(cosLongitude).add(sinLatitude.multiply(sinSubWayLatitude)));
@@ -121,9 +121,9 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         NumberExpression<Double> distanceExpression =
                 Expressions.numberTemplate(Double.class, "6371 * {0}", acosExpression);
 
-        List<House> findByNearestHouseList = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
+        List<House> findByNearestHouseList = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
                 .orderBy(distanceExpression.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -136,12 +136,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     }
     @Override
     public Page<House> findByName(Pageable pageable, String name){
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .where(house.name.like("%"+name+"%"))
+        List<House> houses = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .where(qHouse.name.like("%"+name+"%"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
@@ -150,12 +150,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByAddress(Pageable pageable, String address) {
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .where(house.address.like("%"+address+"%"))
+        List<House> houses = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .where(qHouse.address.like("%"+address+"%"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
