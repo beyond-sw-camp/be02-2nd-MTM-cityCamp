@@ -86,7 +86,6 @@ public class HouseService {
         }
         return houseList;
     }
-
     public List<GetAddressHouseDtoRes> findaroundHouseList(GetUserLocationDtoReq input) {
         //현재 위도 좌표 (y 좌표)
         double nowLatitude = input.getLatitude();
@@ -94,38 +93,37 @@ public class HouseService {
         double nowLongitude = input.getLongitude();
 
         //m당 y 좌표 이동 값
-        double mForLatitude =(1 /(EARTH_RADIUS* 1 *(Math.PI/ 180)))/ 1000;
+        double mForLatitude = (1 / (EARTH_RADIUS * 1 * (Math.PI / 180))) / 1000;
         //m당 x 좌표 이동 값
-        double mForLongitude =(1 /(EARTH_RADIUS* 1 *(Math.PI/ 180)* Math.cos(Math.toRadians(nowLatitude))))/ 1000;
+        double mForLongitude = (1 / (EARTH_RADIUS * 1 * (Math.PI / 180) * Math.cos(Math.toRadians(nowLatitude)))) / 1000;
 
         //현재 위치 기준 검색 거리 좌표
-        double maxY = nowLatitude +(input.getDistance()* mForLatitude);
-        double minY = nowLatitude -(input.getDistance()* mForLatitude);
-        double maxX = nowLongitude +(input.getDistance()* mForLongitude);
-        double minX = nowLongitude -(input.getDistance()* mForLongitude);
+        double maxY = nowLatitude + (input.getDistance() * mForLatitude);
+        double minY = nowLatitude - (input.getDistance() * mForLatitude);
+        double maxX = nowLongitude + (input.getDistance() * mForLongitude);
+        double minX = nowLongitude - (input.getDistance() * mForLongitude);
 
         //해당되는 좌표의 범위 안에 있는 가맹점
         List<House> tempAroundHouseList = houseRepository.getAroundHouseList(maxY, maxX, minY, minX);
         List<GetAddressHouseDtoRes> resultAroundHouseList = new ArrayList<>();
 
         //정확한 거리 측정
-        for(House aroundHouse : tempAroundHouseList) {
+        for (House aroundHouse : tempAroundHouseList) {
             double distance = DistanceCalculateUtils.getDistance(nowLatitude, nowLongitude, aroundHouse.getLatitude(), aroundHouse.getLongitude());
-            if(distance < input.getDistance()) {
+            if (distance < input.getDistance()) {
                 List<HouseImage> houseImageList = aroundHouse.getHouseImageList();
                 List<String> filenames = new ArrayList<>();
                 for (HouseImage productImage : houseImageList) {
                     String filename = productImage.getFilename();
                     filenames.add(filename);
                 }
-                GetAddressHouseDtoRes res = GetAddressHouseDtoRes.toDto(aroundHouse, filenames,distance);
+                GetAddressHouseDtoRes res = GetAddressHouseDtoRes.toDto(aroundHouse, filenames, distance);
                 resultAroundHouseList.add(res);
                 resultAroundHouseList = resultAroundHouseList.stream().sorted(Comparator.comparing(GetAddressHouseDtoRes::getDistance)).collect(Collectors.toList());
             }
         }
         return resultAroundHouseList;
     }
-
 
     public List<GetFindHouseDtoRes> findByAddress(GetHouseListPagingDtoReq req, String address){
         Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());

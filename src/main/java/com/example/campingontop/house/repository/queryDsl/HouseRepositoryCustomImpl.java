@@ -17,14 +17,7 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     public HouseRepositoryCustomImpl() {
         super(House.class);
     }
-    QHouse house;
 
-    public HouseRepositoryCustomImpl(Class<?> domainClass, JPAQueryFactory jpaQueryFactory) {
-        super(domainClass);
-        this.jpaQueryFactory = jpaQueryFactory;
-    }
-
-    private JPAQueryFactory jpaQueryFactory;
     @Override
     public List<House> getAroundHouseList(double maxY, double maxX, double minY, double minX){
         //X= Longtitude, Y= Latitude
@@ -68,12 +61,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByPriceDesc(Pageable pageable){
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .orderBy(house.price.desc())
+        List<House> houses = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .orderBy(qHouse.price.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
@@ -82,12 +75,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByPriceAsc(Pageable pageable){
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses =from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .orderBy(house.price.asc())
+        List<House> houses =from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .orderBy(qHouse.price.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
@@ -96,12 +89,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByName(Pageable pageable, String name){
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .where(house.name.like("%"+name+"%"))
+        List<House> houses = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .where(qHouse.name.like("%"+name+"%"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
@@ -110,12 +103,12 @@ public class HouseRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<House> findByAddress(Pageable pageable, String address) {
-        QHouse house = QHouse.house;
+        QHouse qHouse = new QHouse("house");
 
-        List<House> houses = from(house)
-                .leftJoin(house.houseImageList).fetchJoin()
-                .leftJoin(house.user).fetchJoin()
-                .where(house.address.like("%"+address+"%"))
+        List<House> houses = from(qHouse)
+                .leftJoin(qHouse.houseImageList).fetchJoin()
+                .leftJoin(qHouse.user).fetchJoin()
+                .where(qHouse.address.like("%"+address+"%"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch().stream().collect(Collectors.toList());
