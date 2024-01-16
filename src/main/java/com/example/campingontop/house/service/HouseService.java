@@ -82,22 +82,8 @@ public class HouseService {
         }
         return houseList;
     }
-    public List<GetFindHouseDtoRes> findByAddress(GetHouseListPagingDtoReq req, String address){
-        Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
-        Page<House> result = houseRepository.findByAddress(pageable, address);
-        List<GetFindHouseDtoRes> houseList = new ArrayList<>();
-        for (House house : result) {
-            List<HouseImage> houseImageList = house.getHouseImageList();
-            List<String> filenames = new ArrayList<>();
-            for (HouseImage productImage : houseImageList) {
-                String filename = productImage.getFilename();
-                filenames.add(filename);
-            }
-            GetFindHouseDtoRes res = GetFindHouseDtoRes.toDto(house, filenames);
-            houseList.add(res);
-        }
-        return houseList;
-    }
+
+
     public List<GetFindHouseDtoRes> getNearestHouseList(GetHouseListPagingDtoReq req, Double latitude, Double longitude){
         Pageable pageable = PageRequest.of(req.getPage()-1, req.getSize());
         Page<House> result = houseRepository.getNearestHouseList(pageable, latitude, longitude);
