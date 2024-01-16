@@ -72,3 +72,7 @@ message:
     subject1: ${MESSAGE_SET_SUBJECT1}
     subject2: ${MESSAGE_SET_SUBJECT2}
     subject3: ${MESSAGE_SET_SUBJECT3}
+
+portone:
+  imp_key: ${IMP_KEY}
+  imp_secret: ${IMP_SECRET_KEY}

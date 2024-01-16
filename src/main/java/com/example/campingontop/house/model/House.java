@@ -1,6 +1,5 @@
 package com.example.campingontop.house.model;
 
-import com.example.campingontop.cartHouse.model.CartHouse;
 import com.example.campingontop.houseImage.model.HouseImage;
 import com.example.campingontop.user.model.User;
 import lombok.*;
@@ -70,9 +69,6 @@ public class House {
     @ManyToOne
     @JoinColumn(name = "User_id")
     private User user;
-
-    @OneToMany(mappedBy = "house")
-    private List<CartHouse> cartHouses = new ArrayList<>();
 
     @OneToMany(mappedBy = "house", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<HouseImage> houseImageList = new ArrayList<>();
