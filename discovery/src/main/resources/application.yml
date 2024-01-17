@@ -1,0 +1,11 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: ${APP_NAME}
+
+  eureka:
+    client:
+      register-with-eureka: false
+      fetch-registry: false

@@ -1,0 +1,21 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: ${APP_NAME}
+
+  cloud:
+    gateway:
+      routes:
+        - id: ${ROUTE1_ID}
+          uri: ${ROUTE1_URI}
+          predicates:
+            - Path=${ROUTE1_PATH}
+        - id: ${ROUTE2_ID}
+          uri: ${ROUTE2_URI}
+          predicates:
+            - Path=${ROUTE2_PATH}
+
+
+
