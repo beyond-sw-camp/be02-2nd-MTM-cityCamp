@@ -1,5 +1,4 @@
 # 🏕️ 캠핑온탑 campingOnTop
-<img src="static/img/rooftopCamping.png"/>
 
 <br>
 <br>
