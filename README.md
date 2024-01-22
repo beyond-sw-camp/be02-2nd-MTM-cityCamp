@@ -1,4 +1,5 @@
 # 🏕️ 캠핑온탑 campingOnTop
+![캠핑온탑-001](https://github.com/beyond-sw-camp/be02-2nd-MTM-cityCamp/assets/105422037/90d4ac16-a769-498b-912a-7ca4265230ad)
 
 <br>
 <br>
@@ -7,11 +8,6 @@
 # 🖥️ [PLAYDATA] 한화시스템 BEYOND SW캠프 <br> team MTM
 ## 팀원
 ### 임태우 길민석 이준국 한경훈 장대현
-
-<br>
-
-### [Cluster 서버 시연 영상]
-[ClusterVideo](https://github.com/beyond-sw-camp/be02-1st-MTM-cityCamp/assets/105422037/6f2fccec-7a6e-4ef3-8501-19ec6cb29423)
 
 <br>
 <br>
