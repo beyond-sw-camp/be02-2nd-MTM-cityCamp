@@ -64,3 +64,5 @@ private하게 사용할 수 있고 차량 정체도 피할 수 있는 바쁜 현
 <br>
 <br>
 
+# 요구사항 명세서 
+[요구사항 명세서 링크](https://docs.google.com/spreadsheets/d/1M9KUdkTvYwlbRystq-_26WpynnnbtVQdG6v5hFsb93Y/edit#gid=0)
