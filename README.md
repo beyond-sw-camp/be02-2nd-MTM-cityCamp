@@ -60,6 +60,9 @@ private하게 사용할 수 있고 차량 정체도 피할 수 있는 바쁜 현
 # 🔍 프로젝트 시나리오 (요구사항 분석)
 [상세 보고서 링크](https://www.notion.so/tessssssssy/CampingOnTop-bb6424424c78411fa4d0d7aa8b4d4240)
 
+# SWAGGER-UI
+[백엔드 Swagger-ui](http://13.125.229.218:8080/swagger-ui/)
+
 <br>
 <br>
 <br>
